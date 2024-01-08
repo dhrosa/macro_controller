@@ -29,7 +29,6 @@ while True:
             report[byte_index] = (1 << bit_index)
             print(f"Sending report: {report.hex(' ')}")
             neopixel_write(led_pin, bytes(next(color)))
-            time.sleep(1)
             try:
                 gamepad.send_report(report)
             except OSError:

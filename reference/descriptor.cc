@@ -71,59 +71,54 @@
 #define HID_RI_USAGE_MAXIMUM(DataBits, ...)     _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x20, DataBits, __VA_ARGS__)
 
 const unsigned char descriptor[] = {
-    HID_RI_USAGE_PAGE(8, 1), /* Generic Desktop */
-    HID_RI_USAGE(8, 5),      /* Joystick */
-    HID_RI_COLLECTION(8, 1), /* Application */
+  HID_RI_USAGE_PAGE(8,1),                         // Generic desktop controls
+    HID_RI_USAGE(8,5),                              // Joystick
+    HID_RI_COLLECTION(8,1),                         // Application
+
     // Buttons (2 bytes)
-    HID_RI_LOGICAL_MINIMUM(8, 0),
-    HID_RI_LOGICAL_MAXIMUM(8, 1),
-    HID_RI_PHYSICAL_MINIMUM(8, 0),
-    HID_RI_PHYSICAL_MAXIMUM(8, 1),
-    // The Switch will allow us to expand the original HORI descriptors to a
-    // full 16 buttons. The Switch will make use of 14 of those buttons.
-    HID_RI_REPORT_SIZE(8, 1),
-    HID_RI_REPORT_COUNT(8, 16),
-    HID_RI_USAGE_PAGE(8, 9),
-    HID_RI_USAGE_MINIMUM(8, 1),
-    HID_RI_USAGE_MAXIMUM(8, 16),
-    HID_RI_INPUT(8, 2),
-    // HAT Switch (1 nibble)
-    HID_RI_USAGE_PAGE(8, 1),
-    HID_RI_LOGICAL_MAXIMUM(8, 7),
-    HID_RI_PHYSICAL_MAXIMUM(16, 315),
-    HID_RI_REPORT_SIZE(8, 4),
-    HID_RI_REPORT_COUNT(8, 1),
-    HID_RI_UNIT(8, 20),
-    HID_RI_USAGE(8, 57),
-    HID_RI_INPUT(8, 66),
-    // There's an additional nibble here that's utilized as part of the Switch
-    // Pro Controller. I believe this -might- be separate U/D/L/R bits on the
-    // Switch Pro Controller, as they're utilized as four button descriptors on
-    // the Switch Pro Controller.
-    HID_RI_UNIT(8, 0),
-    HID_RI_REPORT_COUNT(8, 1),
-    HID_RI_INPUT(8, 1),
+    HID_RI_LOGICAL_MINIMUM(8,0),                    // button off state
+    HID_RI_LOGICAL_MAXIMUM(8,1),                    // button on state
+    HID_RI_PHYSICAL_MINIMUM(8,0),                   // button off state
+    HID_RI_PHYSICAL_MAXIMUM(8,1),                   // button on state
+    HID_RI_REPORT_SIZE(8,1),                        // 1 bit per report field
+    HID_RI_REPORT_COUNT(8,14),                      // 14 report fields (14 buttons)
+    HID_RI_USAGE_PAGE(8,9),                         // Buttons (section 12)
+    HID_RI_USAGE_MINIMUM(8,1),
+    HID_RI_USAGE_MAXIMUM(8,14),
+    HID_RI_INPUT(8,2),                              // Variable input
+    HID_RI_REPORT_COUNT(8,2),                       // 2 report fields (empty 2 bits)
+    HID_RI_INPUT(8,1),                              // Array input
+
+    // HAT switch
+    HID_RI_USAGE_PAGE(8,1),                         // Generic desktop controls
+    HID_RI_LOGICAL_MAXIMUM(8,7),                    // 8 valid HAT states, sending 0x08 = nothing pressed
+    HID_RI_PHYSICAL_MAXIMUM(16,315),                // HAT "rotation"
+    HID_RI_REPORT_SIZE(8,4),                        // 4 bits per report field
+    HID_RI_REPORT_COUNT(8,1),                       // 1 report field (a nibble containing entire HAT state)
+    HID_RI_UNIT(8,20),                              // unit degrees
+    HID_RI_USAGE(8,57),                             // Hat switch (section 4.3)
+    HID_RI_INPUT(8,66),                             // Variable input, null state
+    HID_RI_UNIT(8,0),                               // No units
+    HID_RI_REPORT_COUNT(8,1),                       // 1 report field (empty upper nibble)
+    HID_RI_INPUT(8,1),                              // Array input
+
     // Joystick (4 bytes)
-    HID_RI_LOGICAL_MAXIMUM(16, 255),
-    HID_RI_PHYSICAL_MAXIMUM(16, 255),
-    HID_RI_USAGE(8, 48),
-    HID_RI_USAGE(8, 49),
-    HID_RI_USAGE(8, 50),
-    HID_RI_USAGE(8, 53),
-    HID_RI_REPORT_SIZE(8, 8),
-    HID_RI_REPORT_COUNT(8, 4),
-    HID_RI_INPUT(8, 2),
-    // ??? Vendor Specific (1 byte)
-    // This byte requires additional investigation.
-    HID_RI_USAGE_PAGE(16, 65280),
-    HID_RI_USAGE(8, 32),
-    HID_RI_REPORT_COUNT(8, 1),
-    HID_RI_INPUT(8, 2),
-    // Output (8 bytes)
-    // Original observation of this suggests it to be a mirror of the inputs
-    // that we sent. The Switch requires us to have these descriptors available.
-    HID_RI_USAGE(16, 9761),
-    HID_RI_REPORT_COUNT(8, 8),
-    HID_RI_OUTPUT(8, 2),
+    HID_RI_LOGICAL_MAXIMUM(16,255),                 // 0-255 for analog sticks
+    HID_RI_PHYSICAL_MAXIMUM(16,255),
+    HID_RI_USAGE(8,48),                             // X (left X)
+    HID_RI_USAGE(8,49),                             // Y (left Y)
+    HID_RI_USAGE(8,50),                             // Z (right X)
+    HID_RI_USAGE(8,53),                             // Rz (right Y)
+    HID_RI_REPORT_SIZE(8,8),                        // 1 byte per report field
+    HID_RI_REPORT_COUNT(8,4),                       // 4 report fields (left X, left Y, right X, right Y)
+    HID_RI_INPUT(8,2),                              // Variable input
+
+    // I think this is the vendor spec byte.
+    // On the Pokken pad this is usage page 0xFF00 which is vendor defined.
+    // Usage is 0x20 on the Pokken pad, but since the usage page is vendor defined this is kind of meaningless.
+    // Seems fine to just leave this byte set to 0.
+    HID_RI_REPORT_SIZE(8,8),                        // 1 byte per report field
+    HID_RI_REPORT_COUNT(8,1),                       // 1 report field
+    HID_RI_INPUT(8,1),                              // Array input
     HID_RI_END_COLLECTION(0),
-};
+    };
