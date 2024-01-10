@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "macro_controller"
+version = "0.1.0"
+description = 'TODO'
+requires-python = ">=3.11"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Diony Rosa", email = "dhrosa+dev@gmail.com" },
+]
+dependencies = []
+packages = ['src']
+
+[tool.hatch.build.targets.wheel]
+only-packages = true
+
+[tool.hatch.envs.style]
+dependencies = ["setuptools", "isort", "black", "pylama", "mypy", "pytest"]
+
+[tool.hatch.envs.style.scripts]
+format = [
+       "isort --color .",
+       "black .",
+]
+check = [
+      "pylama .",
+      "mypy --strict --pretty .",
+] 
+all = [
+    "hatch run style:format",
+    "hatch run style:check",
+]
+
+[tool.hatch.envs.test]
+dependencies = ["pytest"]
+
+[tool.hatch.envs.test.scripts]
+all = ["pytest --no-header --verbose"]
