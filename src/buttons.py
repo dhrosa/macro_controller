@@ -11,6 +11,7 @@ Plus = 9
 LS = 10
 RS = 11
 
+
 class Buttons:
     def __init__(self):
         self.data = 0
@@ -27,7 +28,7 @@ class Buttons:
             self.data &= ~mask
 
     def __str__(self):
-        return f'{self.data:2X}'
+        return f"{self.data:2X}"
 
     def __bytes__(self):
-        return self.data.to_bytes(2, 'little')
+        return self.data.to_bytes(2, "little")

@@ -1,7 +1,8 @@
-import usb_hid
 import time
+
 import board
 import digitalio
+import usb_hid
 from adafruit_macropad import MacroPad
 
 from buttons import *
@@ -12,6 +13,7 @@ macropad = MacroPad()
 gamepad = usb_hid.devices[0]
 
 REPORT_LENGTH = 9
+
 
 def led_colors():
     while True:
@@ -43,9 +45,9 @@ while True:
 
     report = bytearray(REPORT_LENGTH)
     report[0:2] = bytes(buttons)
-    #print(t)
-    #print(buttons)
-    #print(f"Sending report: {report.hex(' ')}")
+    # print(t)
+    # print(buttons)
+    # print(f"Sending report: {report.hex(' ')}")
     try:
         gamepad.send_report(report)
     except OSError:
