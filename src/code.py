@@ -1,7 +1,9 @@
 import time
 
-import board
-import digitalio
+try:
+    from typing import Generator
+except ImportError:
+    pass
 import usb_hid
 from adafruit_macropad import MacroPad
 
@@ -28,7 +30,7 @@ LS = 10
 RS = 11
 
 
-def led_colors():
+def led_colors() -> Generator[tuple[int, int, int], None, None]:
     while True:
         yield (0x40, 0x00, 0x00)
         yield (0x40, 0x40, 0x00)

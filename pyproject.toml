@@ -40,3 +40,6 @@ dependencies = ["pytest"]
 
 [tool.hatch.envs.test.scripts]
 all = ["pytest --no-header --verbose"]
+
+[tool.mypy]
+disable_error_code=["import-not-found", "import-untyped"]

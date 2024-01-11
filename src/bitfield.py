@@ -1,3 +1,9 @@
+try:
+    from typing import Any
+except ImportError:
+    pass
+
+
 class Bitfield:
     """Bit-wise indexing into an integer."""
 
@@ -9,7 +15,7 @@ class Bitfield:
         mask = 1 << index
         return bool(self.data & mask)
 
-    def __setitem__(self, index: int, value: bool) -> None:
+    def __setitem__(self, index: int, value: Any) -> None:
         mask = 1 << index
         if value:
             self.data |= mask
