@@ -5,7 +5,7 @@ import digitalio
 import usb_hid
 from adafruit_macropad import MacroPad
 
-from buttons import *
+from bitfield import Bitfield
 
 print("\n")
 
@@ -13,6 +13,19 @@ macropad = MacroPad()
 gamepad = usb_hid.devices[0]
 
 REPORT_LENGTH = 9
+
+Y = 0
+B = 1
+A = 2
+X = 3
+L = 4
+R = 5
+ZL = 6
+ZR = 7
+Minus = 8
+Plus = 9
+LS = 10
+RS = 11
 
 
 def led_colors():
@@ -26,7 +39,7 @@ def led_colors():
 
 
 color = led_colors()
-buttons = Buttons()
+buttons = Bitfield(16)
 active = False
 while True:
     timescale = 1_000_000_000
