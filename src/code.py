@@ -65,6 +65,7 @@ class Report:
 
     def __bytes__(self) -> bytes:
         """Convert to raw bytes payload for HID report."""
+        # Unused vendor-specific byte.
         vendor_specific = 0
         return bytes(self.buttons) + bytes(
             (
@@ -73,7 +74,6 @@ class Report:
                 map_analog_value(self.ly),
                 map_analog_value(self.rx),
                 map_analog_value(self.ry),
-                vendor_specific,
                 vendor_specific,
             )
         )

@@ -95,7 +95,7 @@ gamepad = usb_hid.Device(
     usage_page=0x01,  # Generic Desktop Control
     usage=0x05,  # Gamepad
     report_ids=(0,),  # No report ID used
-    in_report_lengths=(9,),
+    in_report_lengths=(8,),
     out_report_lengths=(0,),  # We don't receive any reports.
 )
 
