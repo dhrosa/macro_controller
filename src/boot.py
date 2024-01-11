@@ -84,6 +84,10 @@ DESCRIPTOR = [
     0xC0,  # End Collection
 ]
 
+# USB vendor and product ID for "Hori Co., Ltd HORIPAD for Nintendo Switch".
+#
+# TODO(dhrosa): Check if the Switch actually cares about the VID/PID, or if a
+# correct HID descriptor is sufficient.
 supervisor.set_usb_identification(vid=0x0F0D, pid=0x00C1)
 
 gamepad = usb_hid.Device(
