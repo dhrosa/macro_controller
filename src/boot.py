@@ -96,5 +96,3 @@ gamepad = usb_hid.Device(
 )
 
 usb_hid.enable((gamepad,))
-
-dependencies = ["pytest"]
