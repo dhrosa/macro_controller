@@ -44,10 +44,9 @@ HAT_CENTER = 8
 
 def map_analog_value(value: float) -> int:
     """Maps analog values [-1.0, 1.0] to integer range [0, 255]."""
-    # TODO(dhrosa): 0.0 should map to 128, not 127
-    value = max(value, -1.0)
-    value = min(value, 1.0)
-    return int((value + 1) * 255 / 2)
+    if value <= -1.0 or value >= 1.0:
+        raise ValueError(value)
+    return int(128 + value * 127)
 
 
 class Report:
