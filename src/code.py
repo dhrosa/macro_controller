@@ -18,32 +18,47 @@ print("\n")
 macropad = MacroPad()
 gamepad = usb_hid.devices[0]
 
-REPORT_LENGTH = 9
 
-# Buttons
-Y = 0
-B = 1
-A = 2
-X = 3
-L = 4
-R = 5
-ZL = 6
-ZR = 7
-Minus = 8
-Plus = 9
-LS = 10
-RS = 11
+class buttons:
+    Y = 0
+    B = 1
+    A = 2
+    X = 3
+    L = 4
+    R = 5
+    ZL = 6
+    ZR = 7
+    MINUS = 8
+    PLUS = 9
+    LS = 10
+    RS = 11
 
-# HAT switch directions
-HAT_N = 0
-HAT_NE = 1
-HAT_E = 2
-HAT_SE = 3
-HAT_S = 4
-HAT_SW = 5
-HAT_W = 6
-HAT_NW = 7
-HAT_CENTER = 8
+
+class hat:
+    N = 0
+    NE = 1
+    E = 2
+    SE = 3
+    S = 4
+    SW = 5
+    W = 6
+    NW = 7
+    CENTER = 8
+
+
+class keys:
+    L = 0
+    UP = 1
+    R = 2
+    LEFT = 3
+    PULSE = 4
+    RIGHT = 5
+    Y = 6
+    DOWN = 7
+    X = 8
+    B = 9
+    PLUS = 10
+    A = 11
 
 
 def map_analog_value(value: float) -> int:
@@ -60,7 +75,7 @@ class Report:
         # 16-bit (2 bytes) button bitfield
         self.buttons = Bitfield(16)
         # 4-bit (1 byte) HAT switch state
-        self.hat = HAT_CENTER
+        self.hat = hat.CENTER
         # 4x 8-bit (1 byte) analog stick state
         self.lx = 0
         self.ly = 0
@@ -102,51 +117,45 @@ asyncio.run(main())
 pulse_active = Event()
 report = Report()
 
-KEY_PULSE = 4
-
 
 async def pulse() -> None:
     color = led_colors()
     while True:
         await pulse_active.wait()
 
-        macropad.pixels[KEY_PULSE] = next(color)
-        report.buttons[A] = True
+        macropad.pixels[keys.PULSE] = next(color)
+        report.buttons[buttons.A] = True
         await asyncio.sleep(0.25)
 
-        report.buttons[A] = False
-        macropad.pixels[KEY_PULSE] = (0, 0, 0)
+        report.buttons[buttons.A] = False
+        macropad.pixels[keys.PULSE] = (0, 0, 0)
         await asyncio.sleep(0.75)
 
 
 def handle_directional_key(event: keypad.Event) -> None:
-    KEY_UP = 1
-    KEY_DOWN = 7
-    KEY_LEFT = 3
-    KEY_RIGHT = 5
     k = event.key_number
     pressed = event.pressed
     released = event.released
-    if (k == KEY_UP and pressed) or (k == KEY_DOWN and released):
+    if (k == keys.UP and pressed) or (k == keys.DOWN and released):
         report.ly -= 1
-    if (k == KEY_UP and released) or (k == KEY_DOWN and pressed):
+    if (k == keys.UP and released) or (k == keys.DOWN and pressed):
         report.ly += 1
 
-    if (k == KEY_LEFT and pressed) or (k == KEY_RIGHT and released):
+    if (k == keys.LEFT and pressed) or (k == keys.RIGHT and released):
         report.lx -= 1
-    if (k == KEY_LEFT and released) or (k == KEY_RIGHT and pressed):
+    if (k == keys.LEFT and released) or (k == keys.RIGHT and pressed):
         report.lx += 1
 
 
 def handle_simple_key(event: keypad.Event) -> None:
     direct_buttons = {
-        0: L,
-        2: R,
-        6: Y,
-        8: X,
-        9: B,
-        10: Plus,
-        11: A,
+        keys.L: buttons.L,
+        keys.R: buttons.R,
+        keys.Y: buttons.Y,
+        keys.X: buttons.X,
+        keys.B: buttons.B,
+        keys.PLUS: buttons.PLUS,
+        keys.A: buttons.A,
     }
     button = direct_buttons.get(event.key_number)
     if button is None:
@@ -163,7 +172,7 @@ async def handle_keys() -> None:
 
         handle_simple_key(event)
         handle_directional_key(event)
-        if event.key_number == KEY_PULSE and event.pressed:
+        if event.key_number == keys.PULSE and event.pressed:
             if pulse_active.is_set():
                 pulse_active.clear()
             else:
