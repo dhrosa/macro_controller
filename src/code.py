@@ -1,4 +1,5 @@
-import time
+import asyncio
+from asyncio.event import Event
 
 try:
     from typing import Generator
@@ -89,24 +90,51 @@ def led_colors() -> Generator[tuple[int, int, int], None, None]:
         yield (0x40, 0x00, 0x40)
 
 
-color = led_colors()
-active = False
+async def main() -> None:
+    pass
+
+
+asyncio.run(main())
+
+active = Event()
 report = Report()
-while True:
-    timescale = 1_000_000_000
-    t = (time.monotonic_ns() % timescale) / timescale
-    event = macropad.keys.events.get()
-    if event:
-        if event.pressed:
-            active = not active
-            print(f"{active=}")
-        if active:
-            macropad.pixels.fill(next(color))
-        else:
-            macropad.pixels.fill((0, 0, 0))
-    report.buttons[A] = active * (t < 0.25)
-    print(list(bytes(report)))
-    try:
-        gamepad.send_report(bytes(report))
-    except OSError:
-        print("Skipping due to OS error.")
+
+
+async def pulse() -> None:
+    color = led_colors()
+    while True:
+        await active.wait()
+
+        macropad.pixels.fill(next(color))
+        report.buttons[A] = True
+        await asyncio.sleep(0.25)
+
+        report.buttons[A] = False
+        macropad.pixels.fill((0, 0, 0))
+        await asyncio.sleep(0.75)
+
+
+async def handle_keys() -> None:
+    while True:
+        while event := macropad.keys.events.get():
+            if event.pressed:
+                print("Key press")
+                if active.is_set():
+                    active.clear()
+                else:
+                    active.set()
+            else:
+                print("Key release")
+        await asyncio.sleep(0.1)
+
+
+async def send_hid_reports() -> None:
+    while True:
+        try:
+            gamepad.send_report(bytes(report))
+        except OSError as e:
+            print(f"HID report unsent: {e}")
+        await asyncio.sleep(0.01)
+
+
+asyncio.run(asyncio.gather(pulse(), handle_keys(), send_hid_reports()))  # type: ignore[arg-type]
