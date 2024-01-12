@@ -180,9 +180,26 @@ async def handle_keys() -> None:
 
 
 def render_report(lines: SimpleTextDisplay) -> None:
-    payload = bytes(report)
-    lines[0].text = payload[0:4].hex(" ")
-    lines[1].text = payload[4:8].hex(" ")
+    lines[0].text = " ".join(
+        (
+            "B" if report.buttons[buttons.B] else " ",
+            "A" if report.buttons[buttons.A] else " ",
+            "X" if report.buttons[buttons.X] else " ",
+            "Y" if report.buttons[buttons.Y] else " ",
+            "L" if report.buttons[buttons.L] else " ",
+            "R" if report.buttons[buttons.R] else " ",
+            "-" if report.buttons[buttons.MINUS] else " ",
+        )
+    )
+
+    lines[1].text = " ".join(
+        (
+            "LEFT" if report.lx < 0 else " " * 4,
+            "RIGHT" if report.lx > 0 else " " * 5,
+            "UP" if report.ly < 0 else " " * 2,
+            "DOWN" if report.ly > 0 else " " * 4,
+        )
+    )
     lines.show()
 
 
