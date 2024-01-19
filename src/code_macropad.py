@@ -12,7 +12,7 @@ import usb_hid
 from adafruit_macropad import MacroPad
 
 from bitfield import Bitfield
-from enums import buttons, keys, hat
+from enums import buttons, hat, keys
 
 print("\n")
 
